@@ -1,0 +1,10 @@
+node_modules
+src
+.env
+.git
+.gitignore
+render.yaml
+README.md
+*.md
+.DS_Store
+
