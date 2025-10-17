@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test - Public vs Protected Endpoints</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #444;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+        }
+        .public h2 { border-color: #4CAF50; }
+        .protected h2 { border-color: #FF9800; }
+        
+        .config {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+        button.protected-btn {
+            background: #FF9800;
+        }
+        button.protected-btn:hover {
+            background: #F57C00;
+        }
+        button.login-btn {
+            background: #2196F3;
+        }
+        button.login-btn:hover {
+            background: #0b7dda;
+        }
+        .response {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left: 4px solid #4CAF50;
+            background: #f1f8f4;
+        }
+        .error {
+            border-left: 4px solid #f44336;
+            background: #fef1f0;
+        }
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .token-display {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 API Test - Public vs Protected Endpoints</h1>
+        
+        <div class="info">
+            <strong>📝 Instructions:</strong>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>Set your API URL below (e.g., http://localhost:3001 or your Vercel URL)</li>
+                <li><strong>Public endpoints</strong> (green) work WITHOUT authentication - use for HomePage</li>
+                <li><strong>Protected endpoints</strong> (orange) REQUIRE authentication - use for Dashboard</li>
+                <li>Login first to test protected endpoints</li>
+            </ul>
+        </div>
+
+        <!-- Configuration -->
+        <div class="section config">
+            <h2>⚙️ Configuration</h2>
+            <label for="apiUrl">API Base URL:</label>
+            <input type="text" id="apiUrl" value="http://localhost:3001" placeholder="http://localhost:3001">
+        </div>
+
+        <!-- Public Endpoints Section -->
+        <div class="section public">
+            <h2>🌍 PUBLIC Endpoints (No Auth Required - for HomePage)</h2>
+            <p style="margin-bottom: 15px; color: #666;">These endpoints work without authentication. Use them for your public HomePage.</p>
+            
+            <button onclick="testGetCategories()">GET /api/categories</button>
+            <button onclick="testGetMeals()">GET /api/meals</button>
+            
+            <div id="publicResponse" class="response" style="display:none;"></div>
+        </div>
+
+        <!-- Authentication Section -->
+        <div class="section protected">
+            <h2>🔐 Authentication (Required for Dashboard)</h2>
+            <p style="margin-bottom: 15px; color: #666;">Login first to get a token, then use protected endpoints.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" value="admin@example.com">
+                </div>
+                <div>
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" value="">
+                </div>
+            </div>
+            
+            <button class="login-btn" onclick="login()">🔑 Login</button>
+            
+            <div id="tokenDisplay" class="token-display" style="display:none;">
+                <strong>Token:</strong> <span id="tokenValue"></span>
+            </div>
+            
+            <div id="loginResponse" class="response" style="display:none;"></div>
+        </div>
+
+        <!-- Protected Endpoints Section -->
+        <div class="section protected">
+            <h2>🔒 PROTECTED Endpoints (Auth Required - for Dashboard)</h2>
+            <p style="margin-bottom: 15px; color: #666;">These endpoints require authentication. Login first to test them.</p>
+            
+            <h3 style="margin-top: 20px; margin-bottom: 10px;">Categories Management:</h3>
+            <button class="protected-btn" onclick="createCategory()">POST /api/categories (Create)</button>
+            <button class="protected-btn" onclick="updateCategory()">PUT /api/categories/1 (Update)</button>
+            <button class="protected-btn" onclick="deleteCategory()">DELETE /api/categories/1 (Delete)</button>
+            
+            <h3 style="margin-top: 20px; margin-bottom: 10px;">Meals Management:</h3>
+            <button class="protected-btn" onclick="createMeal()">POST /api/meals (Create)</button>
+            <button class="protected-btn" onclick="updateMeal()">PUT /api/meals/1 (Update)</button>
+            <button class="protected-btn" onclick="deleteMeal()">DELETE /api/meals/1 (Delete)</button>
+            
+            <div id="protectedResponse" class="response" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = '';
+
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value;
+        }
+
+        function displayResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = 'response ' + (isError ? 'error' : 'success');
+            element.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // PUBLIC ENDPOINTS
+        async function testGetCategories() {
+            try {
+                const response = await fetch(`${getApiUrl()}/api/categories`);
+                const data = await response.json();
+                displayResponse('publicResponse', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('publicResponse', { error: error.message }, true);
+            }
+        }
+
+        async function testGetMeals() {
+            try {
+                const response = await fetch(`${getApiUrl()}/api/meals`);
+                const data = await response.json();
+                displayResponse('publicResponse', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('publicResponse', { error: error.message }, true);
+            }
+        }
+
+        // AUTHENTICATION
+        async function login() {
+            try {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
+                const response = await fetch(`${getApiUrl()}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    authToken = data.token;
+                    document.getElementById('tokenDisplay').style.display = 'block';
+                    document.getElementById('tokenValue').textContent = authToken;
+                    displayResponse('loginResponse', {
+                        status: response.status,
+                        message: 'Login successful! ✅',
+                        data: data
+                    }, false);
+                } else {
+                    displayResponse('loginResponse', {
+                        status: response.status,
+                        error: 'Login failed',
+                        data: data
+                    }, true);
+                }
+            } catch (error) {
+                displayResponse('loginResponse', { error: error.message }, true);
+            }
+        }
+
+        // PROTECTED ENDPOINTS - CATEGORIES
+        async function createCategory() {
+            if (!authToken) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/categories`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ name: 'Test Category ' + Date.now() })
+                });
+
+                const data = await response.json();
+                displayResponse('protectedResponse', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('protectedResponse', { error: error.message }, true);
+            }
+        }
+
+        async function updateCategory() {
+            if (!authToken) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/categories/1`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ name: 'Updated Category ' + Date.now() })
+                });
+
+                const data = await response.json();
+                displayResponse('protectedResponse', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('protectedResponse', { error: error.message }, true);
+            }
+        }
+
+        async function deleteCategory() {
+            if (!authToken) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/categories/1`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                displayResponse('protectedResponse', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('protectedResponse', { error: error.message }, true);
+            }
+        }
+
+        // PROTECTED ENDPOINTS - MEALS
+        async function createMeal() {
+            if (!authToken) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/meals`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        name: 'Test Meal ' + Date.now(),
+                        image: 'https://via.placeholder.com/300',
+                        description: 'Test meal description',
+                        price: 50000,
+                        category_id: 1,
+                        ingredients: ['ingredient1', 'ingredient2']
+                    })
+                });
+
+                const data = await response.json();
+                displayResponse('protectedResponse', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('protectedResponse', { error: error.message }, true);
+            }
+        }
+
+        async function updateMeal() {
+            if (!authToken) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/meals/1`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        name: 'Updated Meal ' + Date.now(),
+                        image: 'https://via.placeholder.com/300',
+                        description: 'Updated description',
+                        price: 60000,
+                        category_id: 1,
+                        ingredients: ['updated1', 'updated2']
+                    })
+                });
+
+                const data = await response.json();
+                displayResponse('protectedResponse', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('protectedResponse', { error: error.message }, true);
+            }
+        }
+
+        async function deleteMeal() {
+            if (!authToken) {
+                alert('Please login first!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/meals/1`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                displayResponse('protectedResponse', {
+                    status: response.status,
+                    statusText: response.statusText,
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('protectedResponse', { error: error.message }, true);
+            }
+        }
+    </script>
+</body>
+</html>
+

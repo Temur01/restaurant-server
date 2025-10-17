@@ -5,6 +5,8 @@ import path from 'path';
 import authRoutes from './routes/authRoutes';
 import mealsRoutes from './routes/mealsRoutes';
 import categoriesRoutes from './routes/categoriesRoutes';
+import adminMealsRoutes from './routes/adminMealsRoutes';
+import adminCategoriesRoutes from './routes/adminCategoriesRoutes';
 import { specs, swaggerUi } from './config/swagger';
 
 dotenv.config();
@@ -104,15 +106,30 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes
-app.use('/api/auth', authRoutes);
+// Public Routes (NO AUTH REQUIRED - for HomePage)
 app.use('/api/meals', mealsRoutes);
 app.use('/api/categories', categoriesRoutes);
-app.use('/api/cats', categoriesRoutes); // Test with different path
+
+// Admin Routes (AUTH REQUIRED - for Admin Panel)
+app.use('/api/admin/meals', adminMealsRoutes);
+app.use('/api/admin/categories', adminCategoriesRoutes);
+
+// Authentication Routes
+app.use('/api/auth', authRoutes);
 
 // Test endpoint to verify routing
-app.get('/api/test-categories', (req, res) => {
-  res.json({ message: 'Test categories endpoint works!' });
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    message: 'API is working!',
+    publicEndpoints: {
+      categories: '/api/categories',
+      meals: '/api/meals'
+    },
+    adminEndpoints: {
+      categories: '/api/admin/categories (requires auth)',
+      meals: '/api/admin/meals (requires auth)'
+    }
+  });
 });
 
 // Health check
@@ -123,14 +140,17 @@ app.get('/api/health', (req, res) => {
 // Version check
 app.get('/api/version', (req, res) => {
   res.json({ 
-    version: '1.0.8',
+    version: '2.0.0',
     timestamp: new Date().toISOString(),
-    message: 'Latest deployment - meals route fixed for production (removed file upload)',
-    routes: {
-      auth: '/api/auth',
-      meals: '/api/meals',
-      categories: '/api/categories',
-      cats: '/api/cats'
+    message: 'Separate public and admin endpoints - HomePage no auth, Admin Panel requires auth',
+    publicRoutes: {
+      categories: 'GET /api/categories (no auth)',
+      meals: 'GET /api/meals (no auth)'
+    },
+    adminRoutes: {
+      categories: 'ALL /api/admin/categories (auth required)',
+      meals: 'ALL /api/admin/meals (auth required)',
+      auth: 'POST /api/auth/login, POST /api/auth/register'
     }
   });
 });

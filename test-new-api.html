@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New API Test - Public vs Admin Endpoints</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            font-size: 1.5em;
+        }
+        .public h2 { 
+            border-bottom: 3px solid #4CAF50;
+            color: #4CAF50;
+        }
+        .admin h2 { 
+            border-bottom: 3px solid #FF9800;
+            color: #FF9800;
+        }
+        
+        .config {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        button.admin-btn {
+            background: #FF9800;
+        }
+        button.admin-btn:hover {
+            background: #F57C00;
+        }
+        button.login-btn {
+            background: #2196F3;
+        }
+        button.login-btn:hover {
+            background: #0b7dda;
+        }
+        button.delete-btn {
+            background: #f44336;
+        }
+        button.delete-btn:hover {
+            background: #d32f2f;
+        }
+        .response {
+            background: #f9f9f9;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left: 6px solid #4CAF50;
+            background: #f1f8f4;
+        }
+        .error {
+            border-left: 6px solid #f44336;
+            background: #fef1f0;
+        }
+        .info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .info h3 {
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        .info ul {
+            margin-left: 20px;
+            margin-top: 10px;
+            line-height: 1.8;
+        }
+        .token-display {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 10px;
+            word-break: break-all;
+            font-size: 12px;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        .badge-public {
+            background: #4CAF50;
+            color: white;
+        }
+        .badge-admin {
+            background: #FF9800;
+            color: white;
+        }
+        h3 {
+            color: #666;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 New API Structure Test</h1>
+        
+        <div class="info">
+            <h3>📝 How It Works:</h3>
+            <ul>
+                <li><strong>🌍 PUBLIC Endpoints</strong> - For HomePage, NO authentication needed</li>
+                <li><strong>🔒 ADMIN Endpoints</strong> - For Admin Panel, LOGIN required</li>
+                <li>Set your API URL below and start testing!</li>
+            </ul>
+        </div>
+
+        <!-- Configuration -->
+        <div class="section config">
+            <h2>⚙️ Configuration</h2>
+            <label for="apiUrl">API Base URL:</label>
+            <input type="text" id="apiUrl" value="https://restaurant-server-107q2b1rl-temur01s-projects.vercel.app" placeholder="https://your-api.vercel.app">
+        </div>
+
+        <!-- Public Endpoints Section -->
+        <div class="section public">
+            <h2>🌍 PUBLIC Endpoints <span class="badge badge-public">No Auth Required</span></h2>
+            <p style="margin-bottom: 15px; color: #666;">
+                These endpoints work <strong>WITHOUT authentication</strong>. Use them for your HomePage. 
+                They will <strong>NEVER return 401 error</strong>!
+            </p>
+            
+            <button onclick="testPublicCategories()">GET /api/categories</button>
+            <button onclick="testPublicMeals()">GET /api/meals</button>
+            
+            <div id="publicResponse" class="response" style="display:none;"></div>
+        </div>
+
+        <!-- Authentication Section -->
+        <div class="section admin">
+            <h2>🔐 Authentication <span class="badge badge-admin">Required for Admin</span></h2>
+            <p style="margin-bottom: 15px; color: #666;">Login to get a token for accessing admin endpoints.</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label for="loginEmail">Email:</label>
+                    <input type="email" id="loginEmail" value="admin@example.com">
+                </div>
+                <div>
+                    <label for="loginPassword">Password:</label>
+                    <input type="password" id="loginPassword" value="">
+                </div>
+            </div>
+            
+            <button class="login-btn" onclick="login()">🔑 Login</button>
+            
+            <div id="tokenDisplay" class="token-display" style="display:none;">
+                <strong>✅ Token:</strong> <span id="tokenValue"></span>
+            </div>
+            
+            <div id="loginResponse" class="response" style="display:none;"></div>
+        </div>
+
+        <!-- Admin Endpoints Section -->
+        <div class="section admin">
+            <h2>🔒 ADMIN Endpoints <span class="badge badge-admin">Auth Required</span></h2>
+            <p style="margin-bottom: 15px; color: #666;">
+                These endpoints require authentication. <strong>Login first!</strong> Use these for your Admin Panel.
+            </p>
+            
+            <h3>Categories Management:</h3>
+            <button class="admin-btn" onclick="adminGetCategories()">GET /api/admin/categories</button>
+            <button class="admin-btn" onclick="adminCreateCategory()">POST /api/admin/categories</button>
+            <button class="admin-btn" onclick="adminUpdateCategory()">PUT /api/admin/categories/1</button>
+            <button class="delete-btn" onclick="adminDeleteCategory()">DELETE /api/admin/categories/1</button>
+            
+            <h3>Meals Management:</h3>
+            <button class="admin-btn" onclick="adminGetMeals()">GET /api/admin/meals</button>
+            <button class="admin-btn" onclick="adminCreateMeal()">POST /api/admin/meals</button>
+            <button class="admin-btn" onclick="adminUpdateMeal()">PUT /api/admin/meals/1</button>
+            <button class="delete-btn" onclick="adminDeleteMeal()">DELETE /api/admin/meals/1</button>
+            
+            <div id="adminResponse" class="response" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        let authToken = '';
+
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value;
+        }
+
+        function displayResponse(elementId, data, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = 'response ' + (isError ? 'error' : 'success');
+            element.textContent = JSON.stringify(data, null, 2);
+        }
+
+        // ========== PUBLIC ENDPOINTS ==========
+        async function testPublicCategories() {
+            try {
+                const response = await fetch(`${getApiUrl()}/api/categories`);
+                const data = await response.json();
+                displayResponse('publicResponse', {
+                    endpoint: 'GET /api/categories',
+                    status: response.status,
+                    statusText: response.statusText,
+                    message: '✅ NO AUTH REQUIRED - Works for HomePage!',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('publicResponse', { error: error.message }, true);
+            }
+        }
+
+        async function testPublicMeals() {
+            try {
+                const response = await fetch(`${getApiUrl()}/api/meals`);
+                const data = await response.json();
+                displayResponse('publicResponse', {
+                    endpoint: 'GET /api/meals',
+                    status: response.status,
+                    statusText: response.statusText,
+                    message: '✅ NO AUTH REQUIRED - Works for HomePage!',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('publicResponse', { error: error.message }, true);
+            }
+        }
+
+        // ========== AUTHENTICATION ==========
+        async function login() {
+            try {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
+                const response = await fetch(`${getApiUrl()}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.token) {
+                    authToken = data.token;
+                    document.getElementById('tokenDisplay').style.display = 'block';
+                    document.getElementById('tokenValue').textContent = authToken;
+                    displayResponse('loginResponse', {
+                        status: response.status,
+                        message: '✅ Login successful! Now you can use admin endpoints.',
+                        data: data
+                    }, false);
+                } else {
+                    displayResponse('loginResponse', {
+                        status: response.status,
+                        error: '❌ Login failed',
+                        data: data
+                    }, true);
+                }
+            } catch (error) {
+                displayResponse('loginResponse', { error: error.message }, true);
+            }
+        }
+
+        // ========== ADMIN CATEGORIES ==========
+        async function adminGetCategories() {
+            if (!authToken) {
+                alert('⚠️ Please login first to get an auth token!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/admin/categories`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                displayResponse('adminResponse', {
+                    endpoint: 'GET /api/admin/categories',
+                    status: response.status,
+                    message: '🔒 AUTH REQUIRED - For Admin Panel',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function adminCreateCategory() {
+            if (!authToken) {
+                alert('⚠️ Please login first to get an auth token!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/admin/categories`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ name: 'Test Category ' + Date.now() })
+                });
+
+                const data = await response.json();
+                displayResponse('adminResponse', {
+                    endpoint: 'POST /api/admin/categories',
+                    status: response.status,
+                    message: '🔒 AUTH REQUIRED - For Admin Panel',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function adminUpdateCategory() {
+            if (!authToken) {
+                alert('⚠️ Please login first to get an auth token!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/admin/categories/1`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ name: 'Updated Category ' + Date.now() })
+                });
+
+                const data = await response.json();
+                displayResponse('adminResponse', {
+                    endpoint: 'PUT /api/admin/categories/1',
+                    status: response.status,
+                    message: '🔒 AUTH REQUIRED - For Admin Panel',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function adminDeleteCategory() {
+            if (!authToken) {
+                alert('⚠️ Please login first to get an auth token!');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete category 1?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/admin/categories/1`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                displayResponse('adminResponse', {
+                    endpoint: 'DELETE /api/admin/categories/1',
+                    status: response.status,
+                    message: '🔒 AUTH REQUIRED - For Admin Panel',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        // ========== ADMIN MEALS ==========
+        async function adminGetMeals() {
+            if (!authToken) {
+                alert('⚠️ Please login first to get an auth token!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/admin/meals`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                displayResponse('adminResponse', {
+                    endpoint: 'GET /api/admin/meals',
+                    status: response.status,
+                    message: '🔒 AUTH REQUIRED - For Admin Panel',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function adminCreateMeal() {
+            if (!authToken) {
+                alert('⚠️ Please login first to get an auth token!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/admin/meals`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        name: 'Test Meal ' + Date.now(),
+                        image: 'https://via.placeholder.com/300',
+                        description: 'Test meal description',
+                        price: 50000,
+                        category_id: 1,
+                        ingredients: ['ingredient1', 'ingredient2']
+                    })
+                });
+
+                const data = await response.json();
+                displayResponse('adminResponse', {
+                    endpoint: 'POST /api/admin/meals',
+                    status: response.status,
+                    message: '🔒 AUTH REQUIRED - For Admin Panel',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function adminUpdateMeal() {
+            if (!authToken) {
+                alert('⚠️ Please login first to get an auth token!');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/admin/meals/1`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({
+                        name: 'Updated Meal ' + Date.now(),
+                        image: 'https://via.placeholder.com/300',
+                        description: 'Updated description',
+                        price: 60000,
+                        category_id: 1,
+                        ingredients: ['updated1', 'updated2']
+                    })
+                });
+
+                const data = await response.json();
+                displayResponse('adminResponse', {
+                    endpoint: 'PUT /api/admin/meals/1',
+                    status: response.status,
+                    message: '🔒 AUTH REQUIRED - For Admin Panel',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+
+        async function adminDeleteMeal() {
+            if (!authToken) {
+                alert('⚠️ Please login first to get an auth token!');
+                return;
+            }
+
+            if (!confirm('Are you sure you want to delete meal 1?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${getApiUrl()}/api/admin/meals/1`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+
+                const data = await response.json();
+                displayResponse('adminResponse', {
+                    endpoint: 'DELETE /api/admin/meals/1',
+                    status: response.status,
+                    message: '🔒 AUTH REQUIRED - For Admin Panel',
+                    data: data
+                }, !response.ok);
+            } catch (error) {
+                displayResponse('adminResponse', { error: error.message }, true);
+            }
+        }
+    </script>
+</body>
+</html>
+
