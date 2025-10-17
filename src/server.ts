@@ -14,7 +14,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS configuration for production
+// CORS configuration - Allow all origins for public API
 const allowedOrigins = [
   'https://beyoglu-karshi.com',
   'https://www.beyoglu-karshi.com',
@@ -22,12 +22,15 @@ const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5173',
   'http://127.0.0.1:3000',
-  'http://127.0.0.1:5173'
+  'http://127.0.0.1:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://localhost:4173'
 ];
 
 const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
-    // Allow requests with no origin (like mobile apps or curl requests)
+    // Allow requests with no origin (like mobile apps, curl, Postman, etc.)
     if (!origin) {
       return callback(null, true);
     }
@@ -37,11 +40,16 @@ const corsOptions = {
       return callback(null, true);
     }
     
-    // In production, check against allowed origins
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    // In production, allow all Vercel preview deployments and localhost
+    if (origin.includes('vercel.app') || 
+        origin.includes('localhost') || 
+        origin.includes('127.0.0.1') ||
+        allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'), false);
+      // For other origins, still allow but log it
+      console.log('CORS: Allowing origin:', origin);
+      callback(null, true);
     }
   },
   credentials: true,
@@ -63,12 +71,11 @@ app.options('*', cors(corsOptions));
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   
-  if (process.env.NODE_ENV === 'production') {
-    if (allowedOrigins.includes(origin as string)) {
-      res.header('Access-Control-Allow-Origin', origin);
-    }
+  // Always set CORS headers to allow the requesting origin
+  if (origin) {
+    res.header('Access-Control-Allow-Origin', origin);
   } else {
-    res.header('Access-Control-Allow-Origin', origin || '*');
+    res.header('Access-Control-Allow-Origin', '*');
   }
   
   res.header('Access-Control-Allow-Credentials', 'true');
