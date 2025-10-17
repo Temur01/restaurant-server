@@ -2,26 +2,21 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/server.js",
+      "src": "api/index.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/uploads/(.*)",
-      "dest": "/uploads/$1"
-    },
-    {
       "src": "/(.*)",
-      "dest": "dist/server.js"
+      "dest": "api/index.js"
     }
   ],
-  "outputDirectory": "dist",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "env": {
-    "NODE_ENV": "production"
-  },
-  "regions": ["iad1"]
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api"
+    }
+  ]
 }
 
