@@ -1,10 +1,8 @@
 node_modules
 src
 .env
-.git
-.gitignore
-render.yaml
-README.md
+uploads
 *.md
-.DS_Store
-
+test.html
+test-new-api.html
+render.yaml
