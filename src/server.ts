@@ -91,7 +91,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Swagger Documentation - Serve raw JSON spec
-app.get('/api-docs.json', (req, res) => {
+app.get('/docs.json', (req, res) => {
   console.log('📄 Swagger JSON requested');
   const specsAny = specs as any;
   console.log('Specs paths:', specsAny.paths ? Object.keys(specsAny.paths).length : 0, 'endpoints');
@@ -99,11 +99,11 @@ app.get('/api-docs.json', (req, res) => {
 });
 
 // Swagger UI
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, {
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(specs, {
   customCss: '.swagger-ui .topbar { display: none }',
   customSiteTitle: 'Beyougli Karshi API Documentation',
   swaggerOptions: {
-    url: '/api-docs.json'
+    url: '/docs.json'
   }
 }));
 
@@ -114,50 +114,50 @@ app.use((req, res, next) => {
 });
 
 // Public Routes (NO AUTH REQUIRED - for HomePage)
-app.use('/api/meals', mealsRoutes);
-app.use('/api/categories', categoriesRoutes);
+app.use('/meals', mealsRoutes);
+app.use('/categories', categoriesRoutes);
 
 // Admin Routes (AUTH REQUIRED - for Admin Panel)
-app.use('/api/admin/meals', adminMealsRoutes);
-app.use('/api/admin/categories', adminCategoriesRoutes);
+app.use('/admin/meals', adminMealsRoutes);
+app.use('/admin/categories', adminCategoriesRoutes);
 
 // Authentication Routes
-app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 // Test endpoint to verify routing
-app.get('/api/test', (req, res) => {
+app.get('/test', (req, res) => {
   res.json({ 
     message: 'API is working!',
     publicEndpoints: {
-      categories: '/api/categories',
-      meals: '/api/meals'
+      categories: '/categories',
+      meals: '/meals'
     },
     adminEndpoints: {
-      categories: '/api/admin/categories (requires auth)',
-      meals: '/api/admin/meals (requires auth)'
+      categories: '/admin/categories (requires auth)',
+      meals: '/admin/meals (requires auth)'
     }
   });
 });
 
 // Health check
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server ishlayapti' });
 });
 
 // Version check
-app.get('/api/version', (req, res) => {
+app.get('/version', (req, res) => {
   res.json({ 
     version: '2.0.0',
     timestamp: new Date().toISOString(),
     message: 'Separate public and admin endpoints - HomePage no auth, Admin Panel requires auth',
     publicRoutes: {
-      categories: 'GET /api/categories (no auth)',
-      meals: 'GET /api/meals (no auth)'
+      categories: 'GET /categories (no auth)',
+      meals: 'GET /meals (no auth)'
     },
     adminRoutes: {
-      categories: 'ALL /api/admin/categories (auth required)',
-      meals: 'ALL /api/admin/meals (auth required)',
-      auth: 'POST /api/auth/login, POST /api/auth/register'
+      categories: 'ALL /admin/categories (auth required)',
+      meals: 'ALL /admin/meals (auth required)',
+      auth: 'POST /auth/login, POST /auth/register'
     }
   });
 });
