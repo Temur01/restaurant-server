@@ -36,10 +36,9 @@ CREATE TABLE IF NOT EXISTS meals (
 CREATE INDEX IF NOT EXISTS idx_meals_category_id ON meals(category_id);
 CREATE INDEX IF NOT EXISTS idx_categories_name ON categories(name);
 
--- Insert default admin (password: admin123)
--- Password is hashed using bcrypt
+-- Password is saved as plain text
 INSERT INTO admins (username, password) 
-VALUES ('admin', '$2b$10$rKvVPx7EZ3yKZ0YJKp5jPOQH0F7x1YqLZGxVZNZmYJKp5jPOQH0F7x')
+VALUES ('alibek', 'ali_2001')
 ON CONFLICT (username) DO NOTHING;
 
 -- Insert default categories

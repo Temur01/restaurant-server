@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import pool from '../config/database';
 
@@ -24,15 +23,14 @@ export const login = async (req: Request, res: Response) => {
       [username]
     );
     
-
     if (result.rows.length === 0) {
       return res.status(401).json({ message: 'Noto\'g\'ri username yoki parol' });
     }
 
     const admin = result.rows[0];
 
-    // Check password
-    const isValidPassword = await bcrypt.compare(password, admin.password);
+    // Check password (plain text comparison)
+    const isValidPassword = password === admin.password;
 
     if (!isValidPassword) {
       return res.status(401).json({ message: 'Noto\'g\'ri username yoki parol' });
