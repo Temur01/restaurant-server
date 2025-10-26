@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS meals (
     description TEXT DEFAULT '',
     price INTEGER NOT NULL,
     category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
+    orderNumber INTEGER DEFAULT 0,
     ingredients TEXT[] DEFAULT '{}',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

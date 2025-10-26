@@ -93,6 +93,7 @@ async function migrate() {
           description TEXT DEFAULT '',
           price INTEGER NOT NULL,
           category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
+          orderNumber INTEGER DEFAULT 0,
           ingredients TEXT[] DEFAULT '{}',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -109,6 +110,11 @@ async function migrate() {
     `);
     await pool.query(`
       ALTER TABLE meals ALTER COLUMN ingredients SET DEFAULT '{}'
+    `);
+    
+    // Add orderNumber column to existing meals table if it doesn't exist
+    await pool.query(`
+      ALTER TABLE meals ADD COLUMN IF NOT EXISTS orderNumber INTEGER DEFAULT 0
     `);
 
     // Create indexes
