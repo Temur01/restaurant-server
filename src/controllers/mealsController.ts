@@ -91,24 +91,30 @@ export const createMeal = async (req: AuthRequest, res: Response) => {
     const { name, description, price, category_id, ingredients } = req.body;
     
     // Handle file upload or URL
-    let imageUrl = req.body.image; // For URL input
+    let imageUrl = req.body.image || ''; // For URL input, default to empty string
     if (req.file) {
       // If file is uploaded, use the full URL
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
     }
 
-    if (!name || !imageUrl || !description || !price || !category_id || !ingredients) {
-      return res.status(400).json({ message: 'Barcha maydonlar to\'ldirilishi kerak' });
+    // Only name, price, and category_id are required
+    if (!name || !price || !category_id) {
+      return res.status(400).json({ message: 'Nom, narx va kategoriya kiritilishi kerak' });
     }
 
-    // Parse ingredients if it's a string
-    let parsedIngredients = ingredients;
-    if (typeof ingredients === 'string') {
-      try {
-        parsedIngredients = JSON.parse(ingredients);
-      } catch (e) {
-        return res.status(400).json({ message: 'Tarkib noto\'g\'ri formatda' });
+    // Parse ingredients if it's a string, otherwise default to empty array
+    let parsedIngredients = [];
+    if (ingredients) {
+      if (typeof ingredients === 'string') {
+        try {
+          parsedIngredients = JSON.parse(ingredients);
+        } catch (e) {
+          // If parsing fails, treat as comma-separated string
+          parsedIngredients = ingredients.split(',').map((item: string) => item.trim()).filter((item: string) => item);
+        }
+      } else if (Array.isArray(ingredients)) {
+        parsedIngredients = ingredients;
       }
     }
 
@@ -126,7 +132,7 @@ export const createMeal = async (req: AuthRequest, res: Response) => {
       `INSERT INTO meals (name, image, description, price, category_id, ingredients, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)
        RETURNING *`,
-      [name, imageUrl, description, price, category_id, parsedIngredients]
+      [name, imageUrl, description || '', price, category_id, parsedIngredients]
     );
 
     res.status(201).json({
@@ -146,25 +152,31 @@ export const updateMeal = async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
     const { name, description, price, category_id, ingredients } = req.body;
     
-    // Handle file upload or URL
-    let imageUrl = req.body.image; // For URL input
+    // Handle file upload or URL - if not provided, keep existing
+    let imageUrl = req.body.image;
     if (req.file) {
       // If file is uploaded, use the full URL
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
     }
 
-    if (!name || !imageUrl || !description || !price || !category_id || !ingredients) {
-      return res.status(400).json({ message: 'Barcha maydonlar to\'ldirilishi kerak' });
+    // Only name, price, and category_id are required
+    if (!name || !price || !category_id) {
+      return res.status(400).json({ message: 'Nom, narx va kategoriya kiritilishi kerak' });
     }
 
-    // Parse ingredients if it's a string
-    let parsedIngredients = ingredients;
-    if (typeof ingredients === 'string') {
-      try {
-        parsedIngredients = JSON.parse(ingredients);
-      } catch (e) {
-        return res.status(400).json({ message: 'Tarkib noto\'g\'ri formatda' });
+    // Parse ingredients if it's a string, otherwise default to empty array
+    let parsedIngredients = [];
+    if (ingredients) {
+      if (typeof ingredients === 'string') {
+        try {
+          parsedIngredients = JSON.parse(ingredients);
+        } catch (e) {
+          // If parsing fails, treat as comma-separated string
+          parsedIngredients = ingredients.split(',').map((item: string) => item.trim()).filter((item: string) => item);
+        }
+      } else if (Array.isArray(ingredients)) {
+        parsedIngredients = ingredients;
       }
     }
 
@@ -178,10 +190,16 @@ export const updateMeal = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: 'Kategoriya topilmadi' });
     }
 
+    // Update only provided fields
     const result = await pool.query(
       `UPDATE meals 
-       SET name = $1, image = $2, description = $3, price = $4, 
-           category_id = $5, ingredients = $6, updated_at = CURRENT_TIMESTAMP
+       SET name = $1, 
+           image = COALESCE($2, image), 
+           description = COALESCE($3, description), 
+           price = $4, 
+           category_id = $5, 
+           ingredients = COALESCE($6, ingredients), 
+           updated_at = CURRENT_TIMESTAMP
        WHERE id = $7
        RETURNING *`,
       [name, imageUrl, description, price, category_id, parsedIngredients, id]

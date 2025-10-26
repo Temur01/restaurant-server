@@ -85,22 +85,28 @@ router.get('/:id', getMealById);
  *         application/json:
  *           schema:
  *             type: object
- *             required: [name, image, description, price, category_id, ingredients]
+ *             required: [name, price, category_id]
  *             properties:
  *               name:
  *                 type: string
- *               image:
- *                 type: string
- *               description:
- *                 type: string
+ *                 description: Meal name (required)
  *               price:
  *                 type: integer
+ *                 description: Meal price (required)
  *               category_id:
  *                 type: integer
+ *                 description: Category ID (required)
+ *               image:
+ *                 type: string
+ *                 description: Image URL (optional)
+ *               description:
+ *                 type: string
+ *                 description: Meal description (optional)
  *               ingredients:
  *                 type: array
  *                 items:
  *                   type: string
+ *                 description: List of ingredients (optional)
  *     responses:
  *       201:
  *         description: Meal created successfully
@@ -129,21 +135,28 @@ router.post('/', conditionalUpload, createMeal);
  *         application/json:
  *           schema:
  *             type: object
+ *             required: [name, price, category_id]
  *             properties:
  *               name:
  *                 type: string
- *               image:
- *                 type: string
- *               description:
- *                 type: string
+ *                 description: Meal name (required)
  *               price:
  *                 type: integer
+ *                 description: Meal price (required)
  *               category_id:
  *                 type: integer
+ *                 description: Category ID (required)
+ *               image:
+ *                 type: string
+ *                 description: Image URL (optional)
+ *               description:
+ *                 type: string
+ *                 description: Meal description (optional)
  *               ingredients:
  *                 type: array
  *                 items:
  *                   type: string
+ *                 description: List of ingredients (optional)
  *     responses:
  *       200:
  *         description: Meal updated successfully

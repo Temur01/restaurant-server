@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS admins (
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
+    orderNumber INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -23,11 +24,11 @@ CREATE TABLE IF NOT EXISTS categories (
 CREATE TABLE IF NOT EXISTS meals (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    image VARCHAR(500) NOT NULL,
-    description TEXT NOT NULL,
+    image VARCHAR(500) DEFAULT '',
+    description TEXT DEFAULT '',
     price INTEGER NOT NULL,
     category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
-    ingredients TEXT[] NOT NULL,
+    ingredients TEXT[] DEFAULT '{}',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -42,12 +43,12 @@ VALUES ('alibek', 'ali_2001')
 ON CONFLICT (username) DO NOTHING;
 
 -- Insert default categories
-INSERT INTO categories (name) VALUES
-('Milliy taomlar'),
-('Go''sht taomlar'),
-('Sho''rvalar'),
-('Non mahsulotlari'),
-('Salatlar'),
-('Ichimliklar')
+INSERT INTO categories (name, orderNumber) VALUES
+('Milliy taomlar', 1),
+('Go''sht taomlar', 2),
+('Sho''rvalar', 3),
+('Non mahsulotlari', 4),
+('Salatlar', 5),
+('Ichimliklar', 6)
 ON CONFLICT (name) DO NOTHING;
 

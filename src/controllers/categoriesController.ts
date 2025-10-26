@@ -8,7 +8,7 @@ export const getAllCategories = async (req: AuthRequest, res: Response) => {
     console.log('Getting all categories...');
     
     const result = await pool.query(
-      'SELECT * FROM categories ORDER BY name ASC'
+      'SELECT * FROM categories ORDER BY "orderNumber" ASC, name ASC'
     );
 
     console.log('Categories found:', result.rows.length);
@@ -22,12 +22,12 @@ export const getAllCategories = async (req: AuthRequest, res: Response) => {
     
     // Return sample categories if database fails
     const sampleCategories = [
-      { id: 1, name: 'Milliy taomlar', created_at: new Date(), updated_at: new Date() },
-      { id: 2, name: "Go'sht taomlar", created_at: new Date(), updated_at: new Date() },
-      { id: 3, name: "Sho'rvalar", created_at: new Date(), updated_at: new Date() },
-      { id: 4, name: 'Non mahsulotlari', created_at: new Date(), updated_at: new Date() },
-      { id: 5, name: 'Salatlar', created_at: new Date(), updated_at: new Date() },
-      { id: 6, name: 'Ichimliklar', created_at: new Date(), updated_at: new Date() }
+      { id: 1, name: 'Milliy taomlar', orderNumber: 1, created_at: new Date(), updated_at: new Date() },
+      { id: 2, name: "Go'sht taomlar", orderNumber: 2, created_at: new Date(), updated_at: new Date() },
+      { id: 3, name: "Sho'rvalar", orderNumber: 3, created_at: new Date(), updated_at: new Date() },
+      { id: 4, name: 'Non mahsulotlari', orderNumber: 4, created_at: new Date(), updated_at: new Date() },
+      { id: 5, name: 'Salatlar', orderNumber: 5, created_at: new Date(), updated_at: new Date() },
+      { id: 6, name: 'Ichimliklar', orderNumber: 6, created_at: new Date(), updated_at: new Date() }
     ];
     
     res.json({
@@ -65,17 +65,17 @@ export const getCategoryById = async (req: AuthRequest, res: Response) => {
 // Create new category
 export const createCategory = async (req: AuthRequest, res: Response) => {
   try {
-    const { name } = req.body;
+    const { name, orderNumber } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: 'Kategoriya nomi kiritilishi kerak' });
     }
 
     const result = await pool.query(
-      `INSERT INTO categories (name, updated_at)
-       VALUES ($1, CURRENT_TIMESTAMP)
+      `INSERT INTO categories (name, "orderNumber", updated_at)
+       VALUES ($1, $2, CURRENT_TIMESTAMP)
        RETURNING *`,
-      [name]
+      [name, orderNumber || 0]
     );
 
     res.status(201).json({
@@ -96,7 +96,7 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
 export const updateCategory = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { name } = req.body;
+    const { name, orderNumber } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: 'Kategoriya nomi kiritilishi kerak' });
@@ -104,10 +104,10 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
 
     const result = await pool.query(
       `UPDATE categories 
-       SET name = $1, updated_at = CURRENT_TIMESTAMP
-       WHERE id = $2
+       SET name = $1, "orderNumber" = $2, updated_at = CURRENT_TIMESTAMP
+       WHERE id = $3
        RETURNING *`,
-      [name, id]
+      [name, orderNumber !== undefined ? orderNumber : 0, id]
     );
 
     if (result.rows.length === 0) {
