@@ -8,6 +8,7 @@ import mealsRoutes from './routes/mealsRoutes';
 import categoriesRoutes from './routes/categoriesRoutes';
 import adminMealsRoutes from './routes/adminMealsRoutes';
 import adminCategoriesRoutes from './routes/adminCategoriesRoutes';
+import uploadRoutes from './routes/uploadRoutes';
 import { specs, swaggerUi } from './config/swagger';
 
 dotenv.config();
@@ -121,6 +122,9 @@ app.use('/api/categories', categoriesRoutes);
 // Admin Routes (AUTH REQUIRED - for Admin Panel)
 app.use('/api/admin/meals', adminMealsRoutes);
 app.use('/api/admin/categories', adminCategoriesRoutes);
+
+// Upload Routes (AUTH REQUIRED)
+app.use('/api/uploads', uploadRoutes);
 
 // Authentication Routes
 app.use('/api/auth', authRoutes);

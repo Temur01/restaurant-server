@@ -18,6 +18,19 @@ async function migrate() {
       )
     `);
 
+    // Create uploads table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS uploads (
+        id SERIAL PRIMARY KEY,
+        filename VARCHAR(255) NOT NULL,
+        original_name VARCHAR(255) NOT NULL,
+        mimetype VARCHAR(100) NOT NULL,
+        size INTEGER NOT NULL,
+        url VARCHAR(500) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Create categories table
     await pool.query(`
       CREATE TABLE IF NOT EXISTS categories (
@@ -90,6 +103,7 @@ async function migrate() {
           id SERIAL PRIMARY KEY,
           name VARCHAR(255) NOT NULL,
           image VARCHAR(500) DEFAULT '',
+          image_id INTEGER REFERENCES uploads(id) ON DELETE SET NULL,
           description TEXT DEFAULT '',
           price INTEGER NOT NULL,
           category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
@@ -115,6 +129,11 @@ async function migrate() {
     // Add ordernumber column to existing meals table if it doesn't exist
     await pool.query(`
       ALTER TABLE meals ADD COLUMN IF NOT EXISTS ordernumber INTEGER DEFAULT 0
+    `);
+    
+    // Add image_id column to existing meals table if it doesn't exist
+    await pool.query(`
+      ALTER TABLE meals ADD COLUMN IF NOT EXISTS image_id INTEGER REFERENCES uploads(id) ON DELETE SET NULL
     `);
 
     // Create indexes

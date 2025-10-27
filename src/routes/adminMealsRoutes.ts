@@ -98,7 +98,10 @@ router.get('/:id', getMealById);
  *                 description: Category ID (required)
  *               image:
  *                 type: string
- *                 description: Image URL (optional)
+ *                 description: Image URL (optional, use either this or image_id)
+ *               image_id:
+ *                 type: integer
+ *                 description: Upload ID from /api/uploads endpoint (optional, use either this or image)
  *               description:
  *                 type: string
  *                 description: Meal description (optional)
@@ -151,7 +154,10 @@ router.post('/', conditionalUpload, createMeal);
  *                 description: Category ID (required)
  *               image:
  *                 type: string
- *                 description: Image URL (optional)
+ *                 description: Image URL (optional, use either this or image_id)
+ *               image_id:
+ *                 type: integer
+ *                 description: Upload ID from /api/uploads endpoint (optional, use either this or image)
  *               description:
  *                 type: string
  *                 description: Meal description (optional)

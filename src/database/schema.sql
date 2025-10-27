@@ -11,6 +11,17 @@ CREATE TABLE IF NOT EXISTS admins (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Uploads table for storing file metadata
+CREATE TABLE IF NOT EXISTS uploads (
+    id SERIAL PRIMARY KEY,
+    filename VARCHAR(255) NOT NULL,
+    original_name VARCHAR(255) NOT NULL,
+    mimetype VARCHAR(100) NOT NULL,
+    size INTEGER NOT NULL,
+    url VARCHAR(500) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Categories table
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
@@ -25,6 +36,7 @@ CREATE TABLE IF NOT EXISTS meals (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     image VARCHAR(500) DEFAULT '',
+    image_id INTEGER REFERENCES uploads(id) ON DELETE SET NULL,
     description TEXT DEFAULT '',
     price INTEGER NOT NULL,
     category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
