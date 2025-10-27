@@ -2,6 +2,13 @@
 
 Node.js va PostgreSQL yordamida yaratilgan REST API server.
 
+## 🔥 Production Database Connection Fix
+
+**Issue**: API returns sample data with message "database connection failed"  
+**Solution**: Set `DATABASE_URL` environment variable in production
+
+👉 **See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed production setup guide**
+
 ## O'rnatish
 
 1. PostgreSQL o'rnating va database yarating:

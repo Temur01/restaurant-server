@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
+import pool from './config/database';
 import authRoutes from './routes/authRoutes';
 import mealsRoutes from './routes/mealsRoutes';
 import categoriesRoutes from './routes/categoriesRoutes';
@@ -140,8 +141,24 @@ app.get('/api/test', (req, res) => {
 });
 
 // Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Server ishlayapti' });
+app.get('/api/health', async (req, res) => {
+  try {
+    // Test database connection
+    const dbTest = await pool.query('SELECT NOW()');
+    res.json({ 
+      status: 'OK', 
+      message: 'Server ishlayapti',
+      database: 'Connected',
+      timestamp: dbTest.rows[0].now
+    });
+  } catch (error: any) {
+    res.status(503).json({ 
+      status: 'ERROR', 
+      message: 'Database connection failed',
+      database: 'Disconnected',
+      error: error.message
+    });
+  }
 });
 
 // Version check
