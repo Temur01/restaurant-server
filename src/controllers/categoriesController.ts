@@ -8,7 +8,7 @@ export const getAllCategories = async (req: AuthRequest, res: Response) => {
     console.log('Getting all categories...');
     
     const result = await pool.query(
-      'SELECT * FROM categories ORDER BY "orderNumber" ASC, name ASC'
+      'SELECT * FROM categories ORDER BY ordernumber ASC, name ASC'
     );
 
     console.log('Categories found:', result.rows.length);
@@ -72,7 +72,7 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO categories (name, "orderNumber", updated_at)
+      `INSERT INTO categories (name, ordernumber, updated_at)
        VALUES ($1, $2, CURRENT_TIMESTAMP)
        RETURNING *`,
       [name, orderNumber || 0]
@@ -104,7 +104,7 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
 
     const result = await pool.query(
       `UPDATE categories 
-       SET name = $1, "orderNumber" = $2, updated_at = CURRENT_TIMESTAMP
+       SET name = $1, ordernumber = $2, updated_at = CURRENT_TIMESTAMP
        WHERE id = $3
        RETURNING *`,
       [name, orderNumber !== undefined ? orderNumber : 0, id]
