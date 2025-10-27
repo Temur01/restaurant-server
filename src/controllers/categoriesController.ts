@@ -22,12 +22,12 @@ export const getAllCategories = async (req: AuthRequest, res: Response) => {
     
     // Return sample categories if database fails
     const sampleCategories = [
-      { id: 1, name: 'Milliy taomlar', orderNumber: 1, created_at: new Date(), updated_at: new Date() },
-      { id: 2, name: "Go'sht taomlar", orderNumber: 2, created_at: new Date(), updated_at: new Date() },
-      { id: 3, name: "Sho'rvalar", orderNumber: 3, created_at: new Date(), updated_at: new Date() },
-      { id: 4, name: 'Non mahsulotlari', orderNumber: 4, created_at: new Date(), updated_at: new Date() },
-      { id: 5, name: 'Salatlar', orderNumber: 5, created_at: new Date(), updated_at: new Date() },
-      { id: 6, name: 'Ichimliklar', orderNumber: 6, created_at: new Date(), updated_at: new Date() }
+      { id: 1, name: 'Milliy taomlar', ordernumber: 1, created_at: new Date(), updated_at: new Date() },
+      { id: 2, name: "Go'sht taomlar", ordernumber: 2, created_at: new Date(), updated_at: new Date() },
+      { id: 3, name: "Sho'rvalar", ordernumber: 3, created_at: new Date(), updated_at: new Date() },
+      { id: 4, name: 'Non mahsulotlari', ordernumber: 4, created_at: new Date(), updated_at: new Date() },
+      { id: 5, name: 'Salatlar', ordernumber: 5, created_at: new Date(), updated_at: new Date() },
+      { id: 6, name: 'Ichimliklar', ordernumber: 6, created_at: new Date(), updated_at: new Date() }
     ];
     
     res.json({
@@ -65,7 +65,7 @@ export const getCategoryById = async (req: AuthRequest, res: Response) => {
 // Create new category
 export const createCategory = async (req: AuthRequest, res: Response) => {
   try {
-    const { name, orderNumber } = req.body;
+    const { name, ordernumber } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: 'Kategoriya nomi kiritilishi kerak' });
@@ -75,7 +75,7 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
       `INSERT INTO categories (name, ordernumber, updated_at)
        VALUES ($1, $2, CURRENT_TIMESTAMP)
        RETURNING *`,
-      [name, orderNumber || 0]
+      [name, ordernumber || 0]
     );
 
     res.status(201).json({
@@ -96,7 +96,7 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
 export const updateCategory = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, orderNumber } = req.body;
+    const { name, ordernumber } = req.body;
 
     if (!name) {
       return res.status(400).json({ message: 'Kategoriya nomi kiritilishi kerak' });
@@ -107,7 +107,7 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
        SET name = $1, ordernumber = $2, updated_at = CURRENT_TIMESTAMP
        WHERE id = $3
        RETURNING *`,
-      [name, orderNumber !== undefined ? orderNumber : 0, id]
+      [name, ordernumber !== undefined ? ordernumber : 0, id]
     );
 
     if (result.rows.length === 0) {

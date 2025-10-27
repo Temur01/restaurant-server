@@ -19,7 +19,7 @@ export const getAllMeals = async (req: AuthRequest, res: Response) => {
       image: row.image,
       description: row.description,
       price: row.price,
-      orderNumber: row.ordernumber || 0,
+      ordernumber: row.ordernumber || 0,
       category: row.category_name, // Keep for backward compatibility
       category_id: row.category_id,
       category_info: {
@@ -65,7 +65,7 @@ export const getMealById = async (req: AuthRequest, res: Response) => {
       image: row.image,
       description: row.description,
       price: row.price,
-      orderNumber: row.ordernumber || 0,
+      ordernumber: row.ordernumber || 0,
       category: row.category_name, // Keep for backward compatibility
       category_id: row.category_id,
       category_info: {
@@ -90,7 +90,7 @@ export const getMealById = async (req: AuthRequest, res: Response) => {
 // Create new meal
 export const createMeal = async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, price, category_id, ingredients, orderNumber } = req.body;
+    const { name, description, price, category_id, ingredients, ordernumber } = req.body;
     
     // Handle file upload or URL
     let imageUrl = req.body.image || ''; // For URL input, default to empty string
@@ -131,10 +131,10 @@ export const createMeal = async (req: AuthRequest, res: Response) => {
     }
 
     const result = await pool.query(
-      `INSERT INTO meals (name, image, description, price, category_id, "orderNumber", ingredients, updated_at)
+      `INSERT INTO meals (name, image, description, price, category_id, "ordernumber", ingredients, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
        RETURNING *`,
-      [name, imageUrl, description || '', price, category_id, orderNumber || 0, parsedIngredients]
+      [name, imageUrl, description || '', price, category_id, ordernumber || 0, parsedIngredients]
     );
 
     res.status(201).json({
@@ -152,7 +152,7 @@ export const createMeal = async (req: AuthRequest, res: Response) => {
 export const updateMeal = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, price, category_id, ingredients, orderNumber } = req.body;
+    const { name, description, price, category_id, ingredients, ordernumber } = req.body;
     
     // Handle file upload or URL - if not provided, keep existing
     let imageUrl = req.body.image;
@@ -200,12 +200,12 @@ export const updateMeal = async (req: AuthRequest, res: Response) => {
            description = COALESCE($3, description), 
            price = $4, 
            category_id = $5, 
-           "orderNumber" = COALESCE($6, "orderNumber"), 
+           "ordernumber" = COALESCE($6, "ordernumber"), 
            ingredients = COALESCE($7, ingredients), 
            updated_at = CURRENT_TIMESTAMP
        WHERE id = $8
        RETURNING *`,
-      [name, imageUrl, description, price, category_id, orderNumber !== undefined ? orderNumber : null, parsedIngredients, id]
+      [name, imageUrl, description, price, category_id, ordernumber !== undefined ? ordernumber : null, parsedIngredients, id]
     );
 
     if (result.rows.length === 0) {

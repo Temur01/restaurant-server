@@ -23,15 +23,15 @@ async function migrate() {
       CREATE TABLE IF NOT EXISTS categories (
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) UNIQUE NOT NULL,
-        orderNumber INTEGER DEFAULT 0,
+        ordernumber INTEGER DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
 
-    // Add orderNumber column to existing categories table if it doesn't exist
+    // Add ordernumber column to existing categories table if it doesn't exist
     await pool.query(`
-      ALTER TABLE categories ADD COLUMN IF NOT EXISTS orderNumber INTEGER DEFAULT 0
+      ALTER TABLE categories ADD COLUMN IF NOT EXISTS ordernumber INTEGER DEFAULT 0
     `);
 
     // Check if meals table has old structure (category column exists)
@@ -93,7 +93,7 @@ async function migrate() {
           description TEXT DEFAULT '',
           price INTEGER NOT NULL,
           category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
-          orderNumber INTEGER DEFAULT 0,
+          ordernumber INTEGER DEFAULT 0,
           ingredients TEXT[] DEFAULT '{}',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -112,9 +112,9 @@ async function migrate() {
       ALTER TABLE meals ALTER COLUMN ingredients SET DEFAULT '{}'
     `);
     
-    // Add orderNumber column to existing meals table if it doesn't exist
+    // Add ordernumber column to existing meals table if it doesn't exist
     await pool.query(`
-      ALTER TABLE meals ADD COLUMN IF NOT EXISTS orderNumber INTEGER DEFAULT 0
+      ALTER TABLE meals ADD COLUMN IF NOT EXISTS ordernumber INTEGER DEFAULT 0
     `);
 
     // Create indexes
@@ -127,7 +127,7 @@ async function migrate() {
 
     // Insert default categories
     await pool.query(`
-      INSERT INTO categories (name, orderNumber) VALUES
+      INSERT INTO categories (name, ordernumber) VALUES
       ('Milliy taomlar', 1),
       ('Go''sht taomlar', 2),
       ('Sho''rvalar', 3),

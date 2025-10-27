@@ -102,7 +102,7 @@ router.get('/:id', getMealById);
  *               description:
  *                 type: string
  *                 description: Meal description (optional)
- *               orderNumber:
+ *               ordernumber:
  *                 type: integer
  *                 description: Order number for sorting within category (optional, default: 0)
  *               ingredients:
@@ -155,7 +155,7 @@ router.post('/', conditionalUpload, createMeal);
  *               description:
  *                 type: string
  *                 description: Meal description (optional)
- *               orderNumber:
+ *               ordernumber:
  *                 type: integer
  *                 description: Order number for sorting within category (optional, default: 0)
  *               ingredients:

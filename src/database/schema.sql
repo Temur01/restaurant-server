@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS admins (
 CREATE TABLE IF NOT EXISTS categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL,
-    orderNumber INTEGER DEFAULT 0,
+    ordernumber INTEGER DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS meals (
     description TEXT DEFAULT '',
     price INTEGER NOT NULL,
     category_id INTEGER NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
-    orderNumber INTEGER DEFAULT 0,
+    ordernumber INTEGER DEFAULT 0,
     ingredients TEXT[] DEFAULT '{}',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -44,7 +44,7 @@ VALUES ('alibek', 'ali_2001')
 ON CONFLICT (username) DO NOTHING;
 
 -- Insert default categories
-INSERT INTO categories (name, orderNumber) VALUES
+INSERT INTO categories (name, ordernumber) VALUES
 ('Milliy taomlar', 1),
 ('Go''sht taomlar', 2),
 ('Sho''rvalar', 3),

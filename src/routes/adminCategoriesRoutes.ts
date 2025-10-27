@@ -78,7 +78,7 @@ router.get('/:id', getCategoryById);
  *             properties:
  *               name:
  *                 type: string
- *               orderNumber:
+ *               ordernumber:
  *                 type: integer
  *                 description: Order number for sorting (default: 0)
  *     responses:
@@ -113,7 +113,7 @@ router.post('/', createCategory);
  *             properties:
  *               name:
  *                 type: string
- *               orderNumber:
+ *               ordernumber:
  *                 type: integer
  *                 description: Order number for sorting (default: 0)
  *     responses:
