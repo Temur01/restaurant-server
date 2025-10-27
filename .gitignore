@@ -1,8 +1,33 @@
-node_modules
-dist
+# Environment variables
 .env
-uploads/*
-!uploads/.gitkeep
-*.log
+.env.local
+.env.*.local
 
-.vercel
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (if you want to ignore uploaded files in development)
+# uploads/*
+# !uploads/.gitkeep
