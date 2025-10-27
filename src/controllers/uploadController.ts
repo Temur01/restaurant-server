@@ -28,9 +28,18 @@ export const uploadFile = async (req: AuthRequest, res: Response) => {
       message: 'Fayl muvaffaqiyatli yuklandi',
       upload: result.rows[0]
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Upload file error:', error);
-    res.status(500).json({ message: 'Server xatosi' });
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      detail: error.detail,
+      stack: error.stack
+    });
+    res.status(500).json({ 
+      message: 'Server xatosi',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 

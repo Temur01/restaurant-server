@@ -26,6 +26,9 @@ A comprehensive restaurant management system API with authentication, file uploa
 - **Production:** `https://beyoglu-karshi.uz/api`
 - **Development:** `http://localhost:5000`
 
+> **⚠️ Important:** The endpoint paths (like `/uploads`, `/admin/meals`) should be appended to the base URL.  
+> Example: `https://beyoglu-karshi.uz/api` + `/uploads` = `https://beyoglu-karshi.uz/api/uploads`
+
 ### Prerequisites
 - Node.js >= 18.0.0
 - PostgreSQL database
@@ -82,26 +85,29 @@ Server will run at **http://localhost:5000** 🎉
 
 ### Quick Reference
 
+**Production URLs:** Prepend `https://beyoglu-karshi.uz/api` to each endpoint  
+**Development URLs:** Prepend `http://localhost:5000` to each endpoint
+
 | Category | Method | Endpoint | Auth Required | Description |
 |----------|--------|----------|---------------|-------------|
-| **Auth** | POST | `/api/auth/login` | ❌ | Admin login |
-| **Auth** | GET | `/api/auth/verify` | ✅ | Verify token |
-| **Uploads** | POST | `/api/uploads` | ✅ | Upload file |
-| **Uploads** | GET | `/api/uploads` | ✅ | Get all uploads |
-| **Uploads** | GET | `/api/uploads/:id` | ✅ | Get upload by ID |
-| **Uploads** | DELETE | `/api/uploads/:id` | ✅ | Delete upload |
-| **Meals (Public)** | GET | `/api/meals` | ❌ | Get all meals |
-| **Meals (Public)** | GET | `/api/meals/:id` | ❌ | Get meal by ID |
-| **Meals (Admin)** | GET | `/api/admin/meals` | ✅ | Get all meals |
-| **Meals (Admin)** | GET | `/api/admin/meals/:id` | ✅ | Get meal by ID |
-| **Meals (Admin)** | POST | `/api/admin/meals` | ✅ | Create meal |
-| **Meals (Admin)** | PUT | `/api/admin/meals/:id` | ✅ | Update meal |
-| **Meals (Admin)** | DELETE | `/api/admin/meals/:id` | ✅ | Delete meal |
-| **Categories (Public)** | GET | `/api/categories` | ❌ | Get all categories |
-| **Categories (Admin)** | GET | `/api/admin/categories` | ✅ | Get all categories |
-| **Categories (Admin)** | POST | `/api/admin/categories` | ✅ | Create category |
-| **Categories (Admin)** | PUT | `/api/admin/categories/:id` | ✅ | Update category |
-| **Categories (Admin)** | DELETE | `/api/admin/categories/:id` | ✅ | Delete category |
+| **Auth** | POST | `/auth/login` | ❌ | Admin login |
+| **Auth** | GET | `/auth/verify` | ✅ | Verify token |
+| **Uploads** | POST | `/uploads` | ✅ | Upload file |
+| **Uploads** | GET | `/uploads` | ✅ | Get all uploads |
+| **Uploads** | GET | `/uploads/:id` | ✅ | Get upload by ID |
+| **Uploads** | DELETE | `/uploads/:id` | ✅ | Delete upload |
+| **Meals (Public)** | GET | `/meals` | ❌ | Get all meals |
+| **Meals (Public)** | GET | `/meals/:id` | ❌ | Get meal by ID |
+| **Meals (Admin)** | GET | `/admin/meals` | ✅ | Get all meals |
+| **Meals (Admin)** | GET | `/admin/meals/:id` | ✅ | Get meal by ID |
+| **Meals (Admin)** | POST | `/admin/meals` | ✅ | Create meal |
+| **Meals (Admin)** | PUT | `/admin/meals/:id` | ✅ | Update meal |
+| **Meals (Admin)** | DELETE | `/admin/meals/:id` | ✅ | Delete meal |
+| **Categories (Public)** | GET | `/categories` | ❌ | Get all categories |
+| **Categories (Admin)** | GET | `/admin/categories` | ✅ | Get all categories |
+| **Categories (Admin)** | POST | `/admin/categories` | ✅ | Create category |
+| **Categories (Admin)** | PUT | `/admin/categories/:id` | ✅ | Update category |
+| **Categories (Admin)** | DELETE | `/admin/categories/:id` | ✅ | Delete category |
 
 ---
 
@@ -111,7 +117,9 @@ All admin operations require JWT authentication.
 
 ### Login
 
-**Endpoint:** `POST /api/auth/login`
+**Endpoint:** `POST /auth/login`
+
+**Full URL (Production):** `https://beyoglu-karshi.uz/api/auth/login`
 
 **Request Body:**
 ```json
@@ -143,7 +151,7 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 ### Verify Token
 
-**Endpoint:** `GET /api/auth/verify`
+**Endpoint:** `GET /auth/verify`
 
 **Headers:**
 ```
@@ -173,7 +181,9 @@ The file upload system allows you to upload images and manage them separately fr
 
 Upload an image file to get a unique `upload_id` that you can use when creating or updating meals.
 
-**Endpoint:** `POST /api/uploads`
+**Endpoint:** `POST /uploads`
+
+**Full URL (Production):** `https://beyoglu-karshi.uz/api/uploads`
 
 **Content-Type:** `multipart/form-data`
 
@@ -189,7 +199,7 @@ Authorization: Bearer YOUR_JWT_TOKEN
 **cURL Example:**
 ```bash
 # Development
-curl -X POST http://localhost:5000/api/uploads \
+curl -X POST http://localhost:5000/uploads \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -F "file=@/path/to/your/image.jpg"
 
@@ -207,7 +217,7 @@ const BASE_URL = 'https://beyoglu-karshi.uz/api'; // or 'http://localhost:5000'
 const formData = new FormData();
 formData.append('file', fileInput.files[0]);
 
-const response = await fetch(`${BASE_URL}/api/uploads`, {
+const response = await fetch(`${BASE_URL}/uploads`, {
   method: 'POST',
   headers: {
     'Authorization': `Bearer ${token}`
@@ -248,7 +258,7 @@ After uploading, use the `image_id` when creating or updating meals (see [Admin 
 
 #### Get All Uploads
 
-**Endpoint:** `GET /api/uploads`
+**Endpoint:** `GET /uploads`
 
 **Headers:**
 ```
@@ -284,7 +294,7 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 #### Get Single Upload
 
-**Endpoint:** `GET /api/uploads/:id`
+**Endpoint:** `GET /uploads/:id`
 
 **Headers:**
 ```
@@ -315,7 +325,7 @@ curl -X GET http://localhost:5000/api/uploads/1 \
 
 #### Delete Upload
 
-**Endpoint:** `DELETE /api/uploads/:id`
+**Endpoint:** `DELETE /uploads/:id`
 
 **Headers:**
 ```
@@ -375,7 +385,9 @@ A meal object has the following structure:
 
 ### ✨ Create New Meal
 
-**Endpoint:** `POST /api/admin/meals`
+**Endpoint:** `POST /admin/meals`
+
+**Full URL (Production):** `https://beyoglu-karshi.uz/api/admin/meals`
 
 **Content-Type:** `application/json`
 
@@ -414,7 +426,7 @@ Content-Type: application/json
 **cURL Example:**
 ```bash
 # Development
-curl -X POST http://localhost:5000/api/admin/meals \
+curl -X POST http://localhost:5000/admin/meals \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -456,7 +468,7 @@ const createMeal = async () => {
     ingredients: ["qo'y go'shti", "piyoz", "ziravorlar"]
   };
 
-  const response = await fetch(`${BASE_URL}/api/admin/meals`, {
+  const response = await fetch(`${BASE_URL}/admin/meals`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -497,7 +509,7 @@ const createMeal = async () => {
 
 #### Get All Meals (Admin)
 
-**Endpoint:** `GET /api/admin/meals`
+**Endpoint:** `GET /admin/meals`
 
 **Headers:**
 ```
@@ -506,7 +518,7 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 **Example:**
 ```bash
-curl -X GET http://localhost:5000/api/admin/meals \
+curl -X GET http://localhost:5000/admin/meals \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 

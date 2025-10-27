@@ -191,6 +191,20 @@ app.use((req, res) => {
 // Error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.error('Error:', err);
+  
+  // Handle Multer errors
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ message: 'Fayl hajmi 5MB dan oshmasligi kerak' });
+    }
+    return res.status(400).json({ message: 'Fayl yuklashda xatolik', error: err.message });
+  }
+  
+  // Handle custom file filter errors
+  if (err.message === 'Faqat rasm fayllari ruxsat etiladi!') {
+    return res.status(400).json({ message: err.message });
+  }
+  
   res.status(500).json({ message: 'Server xatosi', error: err.message });
 });
 
