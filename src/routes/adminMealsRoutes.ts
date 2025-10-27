@@ -7,17 +7,6 @@ import {
   deleteMeal
 } from '../controllers/mealsController';
 import { authMiddleware } from '../middleware/auth';
-import upload from '../middleware/upload';
-
-// Conditional upload middleware - only use file upload in development
-const conditionalUpload = (req: any, res: any, next: any) => {
-  // In production, skip file upload (use URLs instead)
-  if (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1') {
-    return next();
-  }
-  // In development, allow file uploads
-  return upload.single('image')(req, res, next);
-};
 
 /**
  * @swagger
@@ -119,7 +108,7 @@ router.get('/:id', getMealById);
  *       401:
  *         description: Unauthorized
  */
-router.post('/', conditionalUpload, createMeal);
+router.post('/', createMeal);
 
 /**
  * @swagger
@@ -177,7 +166,7 @@ router.post('/', conditionalUpload, createMeal);
  *       404:
  *         description: Meal not found
  */
-router.put('/:id', conditionalUpload, updateMeal);
+router.put('/:id', updateMeal);
 
 /**
  * @swagger

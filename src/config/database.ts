@@ -5,16 +5,6 @@ dotenv.config();
 
 // Database configuration for PostgreSQL
 const connectionString = process.env.DATABASE_URL;
-
-// Validate DATABASE_URL is set
-if (!connectionString) {
-  console.error('❌ ERROR: DATABASE_URL environment variable is not set!');
-  console.error('Please set DATABASE_URL in your environment or .env file');
-  console.error('Example: postgresql://username:password@host:port/database');
-}
-
-// Determine if we should use SSL
-// Use SSL if: NODE_ENV is production OR DATABASE_URL contains cloud providers
 const shouldUseSSL = 
   process.env.NODE_ENV === 'production' 
 

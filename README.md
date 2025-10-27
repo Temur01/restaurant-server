@@ -84,7 +84,9 @@ Server http://localhost:5000 da ishga tushadi.
 
 ## 📤 File Upload API Usage
 
-### Step 1: Upload a File
+### Recommended Workflow (2 steps)
+
+**Step 1: Upload a File (multipart/form-data)**
 ```bash
 curl -X POST http://localhost:3001/api/uploads \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -108,7 +110,7 @@ curl -X POST http://localhost:3001/api/uploads \
 }
 ```
 
-### Step 2: Create Meal with Upload ID
+**Step 2: Create Meal with Upload ID (JSON only)**
 ```bash
 curl -X POST http://localhost:3001/api/admin/meals \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
@@ -123,7 +125,10 @@ curl -X POST http://localhost:3001/api/admin/meals \
   }'
 ```
 
-**Note:** You can use either `image_id` (recommended) or `image` (URL) when creating/updating meals.
+**Important Notes:**
+- 🎯 **Meal endpoints only accept JSON** (not formdata)
+- 📤 **Upload endpoint only accepts formdata** (not JSON)
+- ✅ Use `image_id` (recommended) or `image` (URL) for meals
 
 ## Default Admin
 
