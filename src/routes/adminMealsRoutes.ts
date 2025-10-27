@@ -78,30 +78,30 @@ router.get('/:id', getMealById);
  *             properties:
  *               name:
  *                 type: string
- *                 description: Meal name (required)
+ *                 description: Meal name - required
  *               price:
  *                 type: integer
- *                 description: Meal price (required)
+ *                 description: Meal price - required
  *               category_id:
  *                 type: integer
- *                 description: Category ID (required)
+ *                 description: Category ID - required
  *               image:
  *                 type: string
- *                 description: Image URL (optional, use either this or image_id)
+ *                 description: Image URL - optional, use either this or image_id
  *               image_id:
  *                 type: integer
- *                 description: Upload ID from /api/uploads endpoint (optional, use either this or image)
+ *                 description: Upload ID from /api/uploads endpoint - optional, use either this or image
  *               description:
  *                 type: string
- *                 description: Meal description (optional)
+ *                 description: Meal description - optional
  *               ordernumber:
  *                 type: integer
- *                 description: Order number for sorting within category (optional, default: 0)
+ *                 description: Order number for sorting within category - optional, defaults to 0
  *               ingredients:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: List of ingredients (optional)
+ *                 description: List of ingredients - optional
  *     responses:
  *       201:
  *         description: Meal created successfully
@@ -134,30 +134,30 @@ router.post('/', createMeal);
  *             properties:
  *               name:
  *                 type: string
- *                 description: Meal name (required)
+ *                 description: Meal name - required
  *               price:
  *                 type: integer
- *                 description: Meal price (required)
+ *                 description: Meal price - required
  *               category_id:
  *                 type: integer
- *                 description: Category ID (required)
+ *                 description: Category ID - required
  *               image:
  *                 type: string
- *                 description: Image URL (optional, use either this or image_id)
+ *                 description: Image URL - optional, use either this or image_id
  *               image_id:
  *                 type: integer
- *                 description: Upload ID from /api/uploads endpoint (optional, use either this or image)
+ *                 description: Upload ID from /api/uploads endpoint - optional, use either this or image
  *               description:
  *                 type: string
- *                 description: Meal description (optional)
+ *                 description: Meal description - optional
  *               ordernumber:
  *                 type: integer
- *                 description: Order number for sorting within category (optional, default: 0)
+ *                 description: Order number for sorting within category - optional, defaults to 0
  *               ingredients:
  *                 type: array
  *                 items:
  *                   type: string
- *                 description: List of ingredients (optional)
+ *                 description: List of ingredients - optional
  *     responses:
  *       200:
  *         description: Meal updated successfully

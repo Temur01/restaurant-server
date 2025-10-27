@@ -80,7 +80,7 @@ router.get('/:id', getCategoryById);
  *                 type: string
  *               ordernumber:
  *                 type: integer
- *                 description: Order number for sorting (default: 0)
+ *                 description: Order number for sorting, defaults to 0
  *     responses:
  *       201:
  *         description: Category created successfully
@@ -115,7 +115,7 @@ router.post('/', createCategory);
  *                 type: string
  *               ordernumber:
  *                 type: integer
- *                 description: Order number for sorting (default: 0)
+ *                 description: Order number for sorting, defaults to 0
  *     responses:
  *       200:
  *         description: Category updated successfully

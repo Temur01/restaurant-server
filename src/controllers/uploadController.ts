@@ -12,7 +12,8 @@ export const uploadFile = async (req: AuthRequest, res: Response) => {
     }
 
     const { filename, originalname, mimetype, size } = req.file;
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const host = req.get('host') || `localhost:${process.env.PORT || 3001}`;
+    const baseUrl = `${req.protocol}://${host}`;
     const fileUrl = `${baseUrl}/uploads/${filename}`;
 
     // Save file metadata to database

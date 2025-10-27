@@ -6,7 +6,7 @@ dotenv.config();
 // Database configuration for PostgreSQL
 const connectionString = process.env.DATABASE_URL;
 const shouldUseSSL = 
-  process.env.NODE_ENV === 'production' 
+  process.env.NODE_ENV === 'production'; 
 
 const pool = new Pool({
   connectionString,
