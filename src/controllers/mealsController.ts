@@ -105,9 +105,23 @@ export const createMeal = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: 'Nom, narx va kategoriya kiritilishi kerak' });
     }
 
+    // Convert price and category_id to integers (they come as strings from form-data)
+    const priceInt = parseInt(price);
+    const categoryIdInt = parseInt(category_id);
+    const ordernumberInt = ordernumber !== undefined && ordernumber !== null && ordernumber !== '' ? parseInt(ordernumber) : 0;
+
+    // Validate the conversions
+    if (isNaN(priceInt) || priceInt <= 0) {
+      return res.status(400).json({ message: 'Narx musbat son bo\'lishi kerak' });
+    }
+
+    if (isNaN(categoryIdInt) || categoryIdInt <= 0) {
+      return res.status(400).json({ message: 'Kategoriya ID musbat son bo\'lishi kerak' });
+    }
+
     // Parse ingredients if it's a string, otherwise default to empty array
     let parsedIngredients = [];
-    if (ingredients) {
+    if (ingredients !== undefined && ingredients !== null && ingredients !== '') {
       if (typeof ingredients === 'string') {
         try {
           parsedIngredients = JSON.parse(ingredients);
@@ -123,7 +137,7 @@ export const createMeal = async (req: AuthRequest, res: Response) => {
     // Verify category exists
     const categoryCheck = await pool.query(
       'SELECT id FROM categories WHERE id = $1',
-      [category_id]
+      [categoryIdInt]
     );
 
     if (categoryCheck.rows.length === 0) {
@@ -134,7 +148,7 @@ export const createMeal = async (req: AuthRequest, res: Response) => {
       `INSERT INTO meals (name, image, description, price, category_id, "ordernumber", ingredients, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)
        RETURNING *`,
-      [name, imageUrl, description || '', price, category_id, ordernumber || 0, parsedIngredients]
+      [name, imageUrl, description || '', priceInt, categoryIdInt, ordernumberInt, parsedIngredients]
     );
 
     res.status(201).json({
@@ -167,9 +181,23 @@ export const updateMeal = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: 'Nom, narx va kategoriya kiritilishi kerak' });
     }
 
+    // Convert price and category_id to integers (they come as strings from form-data)
+    const priceInt = parseInt(price);
+    const categoryIdInt = parseInt(category_id);
+    const ordernumberInt = ordernumber !== undefined && ordernumber !== null && ordernumber !== '' ? parseInt(ordernumber) : null;
+
+    // Validate the conversions
+    if (isNaN(priceInt) || priceInt <= 0) {
+      return res.status(400).json({ message: 'Narx musbat son bo\'lishi kerak' });
+    }
+
+    if (isNaN(categoryIdInt) || categoryIdInt <= 0) {
+      return res.status(400).json({ message: 'Kategoriya ID musbat son bo\'lishi kerak' });
+    }
+
     // Parse ingredients if it's a string, otherwise default to empty array
     let parsedIngredients = [];
-    if (ingredients) {
+    if (ingredients !== undefined && ingredients !== null && ingredients !== '') {
       if (typeof ingredients === 'string') {
         try {
           parsedIngredients = JSON.parse(ingredients);
@@ -185,7 +213,7 @@ export const updateMeal = async (req: AuthRequest, res: Response) => {
     // Verify category exists
     const categoryCheck = await pool.query(
       'SELECT id FROM categories WHERE id = $1',
-      [category_id]
+      [categoryIdInt]
     );
 
     if (categoryCheck.rows.length === 0) {
@@ -201,11 +229,11 @@ export const updateMeal = async (req: AuthRequest, res: Response) => {
            price = $4, 
            category_id = $5, 
            "ordernumber" = COALESCE($6, "ordernumber"), 
-           ingredients = COALESCE($7, ingredients), 
+           ingredients = $7, 
            updated_at = CURRENT_TIMESTAMP
        WHERE id = $8
        RETURNING *`,
-      [name, imageUrl, description, price, category_id, ordernumber !== undefined ? ordernumber : null, parsedIngredients, id]
+      [name, imageUrl, description, priceInt, categoryIdInt, ordernumberInt, parsedIngredients, id]
     );
 
     if (result.rows.length === 0) {
